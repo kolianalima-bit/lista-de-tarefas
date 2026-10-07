@@ -1,29 +1,36 @@
-function login(event) {
-            event.preventDefault()
-            let email = document.querySelector("#email").value;
-            let senha = document.querySelector("#senha").value;
-            let dados = {
-                email,
-                senha
-            }
-            fetch("https://js-lista-de-tarefas-api.onrender.com/login", {
-                method: "post",
-                headers: {
-                    "content-type": "application/json"
-                },
-                body: JSON.stringify(dados)
-            })
-                .then(resposta => resposta.json())
-                .then(json => {
-                    if (json.tipo == "error") {
-                        alert(json.mesagem);
-                        retorn;
+let tarefas = [];
 
-                    }
-                    console.log(json);
-                })
 
-                .catch(error => {
-                    alert(error.message);
-                })
+function buscarTarefas() {
+    try {
+
+        let usuario = JSON.parse(sessionStorage.getItem("usuario")) || null;
+
+        if (!usuario) {
+            window.location.href = "index.html";
         }
+        fetch(`https://js-lista-de-tarefas-api.onrender.com/tarefas/${usuario.id}`)
+            .then(resposta => resposta.json())
+            .then(json => {
+                if (json.tipo == "error") {
+                    throw json.mesagem;
+                }
+
+
+                tarefas = json;
+                carregarTarefas(tarefas);
+            })
+
+    } catch (error) {
+        console.log("Error:", error.message);
+    }
+}
+
+buscarTarefas();
+
+function carregarTarefas(listaTarefas){
+    let grid = document.querySelector("#tarefas");
+    if(listaTarefas.length == 0){
+        grid.innerHTML = "<p>Crie sua primeira tarefa</p>";
+    } 
+}

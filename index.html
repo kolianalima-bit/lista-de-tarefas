@@ -11,7 +11,7 @@
 <body class="bg-slate-200 h-screen flex justify-center items-center">
     <div class="bg-white shadow-lg rounded-lg p-4">
         <h1 class="font-bold text-xl mb-6">Seja bem-vindo(a)</h1>
-        <form onsubmit="login(event)" class="flex flex-col w-80">
+        <form onsubmit="login()" class="flex flex-col w-80">
             <label for="email" class="uppercase text-xs font-bold mb-2 block">Email</label>
             <input id="email" placeholder="email@email.com" class="pl-3 h-10 border-2 border-slate-400 focus:border-purple-600 duration-150 rounded outline-none mb-4" required />
             <label for="senha" class="uppercase text-xs font-bold mb-2 block">Senha</label>
@@ -21,7 +21,50 @@
 
         </form>
     </div>
-    <script src="index.js"></script>
+   <script> 
+        function login() {
+            event.preventDefault()
+
+            let email = document.querySelector("#email").value;
+            let senha = document.querySelector("#senha").value;
+            let dados = {
+                email,
+                senha
+            }
+
+
+            fetch("https://js-lista-de-tarefas-api.onrender.com/login", {
+                method: "post",
+                headers: {
+                    "content-type": "application/json"
+                },
+                body: JSON.stringify(dados)
+            })
+                .then(resposta => resposta.json())
+                .then(json => {
+                    if (json.tipo == "warning") {
+                        alert(json.mensagem);
+                        return;
+                    }
+
+                    sessionStorage.setItem("usuario", JSON.stringify(json.usuario));
+
+                    alert(json.mesagem);
+                    window.location.href = "tarefas.html";
+                })
+                .catch(error => {
+                    alert(error.message);
+                })
+
+            console.log(dados);
+        }
+
+        
+
+    </script>
+
+
+    
     
     </body>
 
